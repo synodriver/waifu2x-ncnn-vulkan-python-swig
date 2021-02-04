@@ -14,7 +14,7 @@ Not yet available as release. However you can build it yourself.
 ## Build
 ```shell
 git clone https://github.com/ArchieMeng/waifu2x-ncnn-vulkan-python.git
-cd waifu2x-ncnn-vulkan
+cd waifu2x-ncnn-vulkan-python
 git submodule update --init --recursive
 cd src
 cmake -B build .
