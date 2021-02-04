@@ -2,14 +2,24 @@ cmake_policy(SET CMP0091 NEW)
 set(CMAKE_POLICY_DEFAULT_CMP0091 NEW)
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
-project(waifu2x-ncnn-vulkan)
+project(python-waifu2x-ncnn-vulkan)
+
+# SWIG
+find_package(PythonLibs REQUIRED)
+find_package(SWIG REQUIRED COMPONENTS python)
+if(SWIG_FOUND)
+    message("SWIG found: ${SWIG_EXECUTABLE}")
+    INCLUDE(${SWIG_USE_FILE})
+    if(NOT SWIG_python_FOUND)
+        message(WARNING "SWIG python bindings cannot be generated")
+    endif()
+endif()
 
 cmake_minimum_required(VERSION 3.9)
 
 set(CMAKE_BUILD_TYPE Release)
 
 option(USE_SYSTEM_NCNN "build with system libncnn" OFF)
-option(USE_SYSTEM_WEBP "build with system libwebp" OFF)
 option(USE_STATIC_MOLTENVK "link moltenvk static library" OFF)
 
 find_package(Threads)
@@ -33,6 +43,9 @@ macro(waifu2x_add_shader SHADER_SRC)
 endmacro()
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
+include_directories(${PYTHON_INCLUDE_DIRS})
+include_directories(.)
+#set(CMAKE_CXX_STANDARD 11)
 
 if(OPENMP_FOUND)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
@@ -101,7 +114,7 @@ if(NOT USE_SYSTEM_NCNN)
     option(NCNN_BUILD_TOOLS "" OFF)
     option(NCNN_BUILD_EXAMPLES "" OFF)
     option(NCNN_DISABLE_RTTI "" ON)
-    option(NCNN_DISABLE_EXCEPTION "" ON)
+    option(NCNN_DISABLE_EXCEPTION "" OFF)
 
     option(WITH_LAYER_absval "" OFF)
     option(WITH_LAYER_argmax "" OFF)
@@ -194,31 +207,6 @@ if(USE_SYSTEM_WEBP)
     endif()
 endif()
 
-if(NOT USE_SYSTEM_WEBP)
-    # build libwebp library
-    if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/libwebp/CMakeLists.txt")
-        message(FATAL_ERROR "The submodules were not downloaded! Please update submodules with \"git submodule update --init --recursive\" and try again.")
-    endif()
-
-    option(WEBP_ENABLE_SIMD "" ON)
-    option(WEBP_BUILD_ANIM_UTILS "" OFF)
-    option(WEBP_BUILD_CWEBP "" OFF)
-    option(WEBP_BUILD_DWEBP "" OFF)
-    option(WEBP_BUILD_GIF2WEBP "" OFF)
-    option(WEBP_BUILD_IMG2WEBP "" OFF)
-    option(WEBP_BUILD_VWEBP "" OFF)
-    option(WEBP_BUILD_WEBPINFO "" OFF)
-    option(WEBP_BUILD_WEBPMUX "" OFF)
-    option(WEBP_BUILD_EXTRAS "" OFF)
-    option(WEBP_BUILD_WEBP_JS "" OFF)
-    option(WEBP_NEAR_LOSSLESS "" OFF)
-    option(WEBP_ENABLE_SWAP_16BIT_CSP "" OFF)
-
-    add_subdirectory(libwebp)
-
-    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/libwebp/src)
-endif()
-
 waifu2x_add_shader(waifu2x_preproc.comp)
 waifu2x_add_shader(waifu2x_postproc.comp)
 waifu2x_add_shader(waifu2x_preproc_tta.comp)
@@ -226,11 +214,7 @@ waifu2x_add_shader(waifu2x_postproc_tta.comp)
 
 add_custom_target(generate-spirv DEPENDS ${SHADER_SPV_HEX_FILES})
 
-add_executable(waifu2x-ncnn-vulkan main.cpp waifu2x.cpp)
-
-add_dependencies(waifu2x-ncnn-vulkan generate-spirv)
-
-set(WAIFU2X_LINK_LIBRARIES ncnn webp ${Vulkan_LIBRARY})
+set(WAIFU2X_LINK_LIBRARIES ncnn ${Vulkan_LIBRARY})
 
 if(USE_STATIC_MOLTENVK)
     find_library(CoreFoundation NAMES CoreFoundation)
@@ -254,4 +238,12 @@ if(USE_STATIC_MOLTENVK)
     )
 endif()
 
-target_link_libraries(waifu2x-ncnn-vulkan ${WAIFU2X_LINK_LIBRARIES})
+file(COPY ../models DESTINATION .)
+file(COPY waifu2x_ncnn_vulkan.py DESTINATION .)
+
+set (UseSWIG_TARGET_NAME_PREFERENCE STANDARD)
+set_property(SOURCE waifu2x.i PROPERTY CPLUSPLUS ON DEPENDS generate-spirv)
+swig_add_library(waifu2x_ncnn_vulkan_wrapper LANGUAGE python SOURCES waifu2x.i waifu2x.cpp waifu2x_wrapped.cpp)
+add_dependencies(waifu2x_ncnn_vulkan_wrapper generate-spirv)
+target_compile_options(waifu2x_ncnn_vulkan_wrapper PUBLIC -fexceptions)
+target_link_libraries(waifu2x_ncnn_vulkan_wrapper ${WAIFU2X_LINK_LIBRARIES} ${PYTHON_LIBRARIES})

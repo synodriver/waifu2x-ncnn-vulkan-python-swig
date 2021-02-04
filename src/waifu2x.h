@@ -33,7 +33,7 @@ public:
     int tilesize;
     int prepadding;
 
-private:
+protected:
     ncnn::VulkanDevice* vkdev;
     ncnn::Net net;
     ncnn::Pipeline* waifu2x_preproc;
