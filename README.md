@@ -31,16 +31,13 @@ from PIL import Image
 from waifu2x_ncnn_vulkan import Waifu2x
 
 im = Image.open("0.jpg")
-
 w2x_obj = Waifu2x(gpuid=0)
-w2x_obj.set_params(noise=0, scale=2)
-w2x_obj.load()
 out_im = w2x_obj.process(im)
 out_im.save("1.png")
 ```
 
 ## Known issues
-- The current performance of python wrapped Waifu2x implement is about 20% slower than the original binary excutable.
+- The current performance of python binded Waifu2x implementation is about 20% slower than the original binary excutable.
 It is caused by inefficient pixel data copying between C and python. Will be improved in the future.
 
 ## Original waifu2x Project

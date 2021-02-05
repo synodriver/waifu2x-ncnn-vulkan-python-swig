@@ -4,6 +4,7 @@
 
 //Todo: implement faster C-array to Python bytes methods like buffer interface from https://stackoverflow.com/questions/5424324/fast-conversion-of-c-c-vector-to-numpy-array
 
+// wrapper class of ncnn::Mat
 typedef struct Image{
     unsigned char *data;
     int w;
@@ -16,12 +17,6 @@ typedef struct Image{
         this->elempack = channels;
     }
 
-//    Image(unsigned int* d, int w, int h, int channels) {
-//        this->data = (unsigned char*) d;
-//        this->w = w;
-//        this->h = h;
-//        this->elempack = channels;
-//    }
 } Image;
 
 class Waifu2xWrapped : public Waifu2x {
