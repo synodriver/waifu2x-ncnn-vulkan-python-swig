@@ -30,8 +30,10 @@ Waifu2x::~Waifu2x()
         delete waifu2x_postproc;
     }
 
-    bicubic_2x->destroy_pipeline(net.opt);
-    delete bicubic_2x;
+    if (bicubic_2x) {
+        bicubic_2x->destroy_pipeline(net.opt);
+        delete bicubic_2x;
+    }
 }
 
 #if _WIN32
