@@ -85,8 +85,10 @@ class Waifu2x:
                 modelpath = os.path.join(
                     self.model, "noise%d_scale2.0x_model.bin" % self._raw_w2xobj.noise
                 )
-
-        self._raw_w2xobj.load(parampath, modelpath)
+        if os.path.exists(parampath) and os.path.exists(modelpath):
+            self._raw_w2xobj.load(parampath, modelpath)
+        else:
+            raise FileNotFoundError(f'{parampath} or {modelpath} not found')
 
     def process(self, im: Image) -> Image:
         """
