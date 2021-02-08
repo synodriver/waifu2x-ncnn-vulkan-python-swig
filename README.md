@@ -39,7 +39,8 @@ out_im.save("1.png")
 ## Known issues
 - The current performance of python binded Waifu2x implementation is about 20% slower than the original binary excutable.
 It is caused by inefficient pixel data copying between C and python. Will be improved in the future.
-
+- Cannot be compiled on Windows now. Due to Windows specified std::wstring handling. So far, it is ok on Linux now.
+- Module finalization will crash on devices with a dedicated graphics card. (The image processing still works.) [Issue](https://github.com/Tencent/ncnn/issues/2666)
 ## Original waifu2x Project
 
 - https://github.com/nagadomi/waifu2x
