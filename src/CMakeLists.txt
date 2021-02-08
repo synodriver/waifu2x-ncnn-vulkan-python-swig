@@ -2,7 +2,7 @@ cmake_policy(SET CMP0091 NEW)
 set(CMAKE_POLICY_DEFAULT_CMP0091 NEW)
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
-project(python-waifu2x-ncnn-vulkan)
+project(waifu2x-ncnn-vulkan-python)
 
 # SWIG
 find_package(PythonLibs REQUIRED)
