@@ -739,3 +739,11 @@ Waifu2xWrapped::Waifu2xWrapped(int gpuid, bool tta_mode, int num_threads) : Waif
 uint32_t Waifu2xWrapped::get_heap_budget() {
     return this->vkdev->get_heap_budget();
 };
+
+int get_gpu_count() {
+    return ncnn::get_gpu_count();
+}
+
+void destroy_gpu_instance() {
+    ncnn::destroy_gpu_instance();
+}

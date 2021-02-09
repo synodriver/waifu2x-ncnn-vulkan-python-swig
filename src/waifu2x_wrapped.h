@@ -26,4 +26,7 @@ public:
     int process_cpu(const Image& inimage, Image& outimage) const;
     uint32_t get_heap_budget();
 };
+
+int get_gpu_count();
+void destroy_gpu_instance();
 #endif //WAIFU2X_NCNN_VULKAN_WAIFU2X_WRAPPED_H
