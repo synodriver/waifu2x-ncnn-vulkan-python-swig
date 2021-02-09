@@ -1,29 +1,32 @@
 import os
+from pathlib import Path
+
 from PIL import Image
 
 if __package__:
     import importlib
-    raw = importlib.import_module(f'{__package__}.waifu2x_ncnn_vulkan_wrapper')
+
+    raw = importlib.import_module(f"{__package__}.waifu2x_ncnn_vulkan_wrapper")
 else:
     import waifu2x_ncnn_vulkan_wrapper as raw
 
 
 class Waifu2x:
     def __init__(
-        self,
-        gpuid=0,
-        model="models-cunet",
-        tta_mode=False,
-        num_threads=1,
-        scale=2,
-        noise=0,
-        tilesize=0,
+            self,
+            gpuid=0,
+            model="models-cunet",
+            tta_mode=False,
+            num_threads=1,
+            scale=2,
+            noise=0,
+            tilesize=0,
     ):
         """
         Waifu2x class which can do image super resolution.
 
         :param gpuid: the id of the gpu device to use. -1 for cpu mode.
-        :param model: the name or the path to the
+        :param model: the name or the path to the model
         :param tta_mode: whether to enable tta mode or not
         :param num_threads: the number of threads in upscaling
         :param scale: scale ratio. value: 1/2. default: 2
@@ -53,42 +56,46 @@ class Waifu2x:
             self._raw_w2xobj.tilesize = tilesize
         self._raw_w2xobj.prepadding = self.get_prepadding()
 
-    def load(self, parampath: str="", modelpath: str="") -> None:
+    def load(self, parampath: str = "", modelpath: str = "") -> None:
         """
-        Load models from given paths
+        Load models from given paths. Use self.model if one or all of the parameters are not given.
 
-        :param parampath: model params name or the path to model params. usually ended with ".param"
-        :param modelpath: model bin name or the path to model bin. usually ended with ".bin"
+        :param parampath: the path to model params. usually ended with ".param"
+        :param modelpath: the path to model bin. usually ended with ".bin"
         :return: None
         """
         if not parampath or not modelpath:
-            if not os.path.isabs(self.model):
-                if not os.path.exists(self.model):  # try to load it from module path
-                    self.model = os.path.join(
-                        os.path.dirname(__file__), "models", self.model
-                    )
+            model_dir = Path(self.model)
+            if not model_dir.is_absolute():
+                if (
+                        not model_dir.is_dir()
+                ):  # try to load it from module path if not exists as directory
+                    dir_path = Path(__file__).parent
+                    model_dir = dir_path.joinpath("models", self.model)
 
             if self._raw_w2xobj.noise == -1:
-                parampath = os.path.join(self.model, "scale2.0x_model.param")
-                modelpath = os.path.join(self.model, "scale2.0x_model.bin")
+                parampath = model_dir.joinpath("scale2.0x_model.param")
+                modelpath = model_dir.joinpath("scale2.0x_model.bin")
+                self._raw_w2xobj.scale = 2
             elif self._raw_w2xobj.scale == 1:
-                parampath = os.path.join(
-                    self.model, "noise%d_model.param" % self._raw_w2xobj.noise
+                parampath = model_dir.joinpath(
+                    f"noise{self._raw_w2xobj.noise}_model.param"
                 )
-                modelpath = os.path.join(
-                    self.model, "noise%d_model.bin" % self._raw_w2xobj.noise
+                modelpath = model_dir.joinpath(
+                    f"noise{self._raw_w2xobj.noise}_model.bin"
                 )
             elif self._raw_w2xobj.scale == 2:
-                parampath = os.path.join(
-                    self.model, "noise%d_scale2.0x_model.param" % self._raw_w2xobj.noise
+                parampath = model_dir.joinpath(
+                    f"noise{self._raw_w2xobj.noise}_scale2.0x_model.param"
                 )
-                modelpath = os.path.join(
-                    self.model, "noise%d_scale2.0x_model.bin" % self._raw_w2xobj.noise
+                modelpath = model_dir.joinpath(
+                    f"noise{self._raw_w2xobj.noise}_scale2.0x_model.bin"
                 )
-        if os.path.exists(parampath) and os.path.exists(modelpath):
-            self._raw_w2xobj.load(parampath, modelpath)
+
+        if Path(parampath).exists() and Path(modelpath).exists():
+            self._raw_w2xobj.load(str(parampath), str(modelpath))
         else:
-            raise FileNotFoundError(f'{parampath} or {modelpath} not found')
+            raise FileNotFoundError(f"{parampath} or {modelpath} not found")
 
     def process(self, im: Image) -> Image:
         """
@@ -111,7 +118,7 @@ class Waifu2x:
             self._raw_w2xobj.scale * im.width,
             self._raw_w2xobj.scale * im.height,
             channels,
-        )
+            )
 
         if self.gpuid != -1:
             self._raw_w2xobj.process(raw_in_image, raw_out_image)
@@ -145,7 +152,7 @@ class Waifu2x:
         elif "models-upconv_7_photo" in self.model:
             return 7
         else:
-            raise ValueError('model "%s" is not supported' % self.model)
+            raise ValueError(f'model "{self.model}" is not supported')
 
     def get_tilesize(self):
         if self.gpuid == -1:
@@ -177,7 +184,7 @@ if __name__ == "__main__":
 
     im = Image.open("../../images/0.jpg")
     t = time()
-    w2x_obj = Waifu2x(0, noise=-1, scale=2)
+    w2x_obj = Waifu2x(0, noise=0, scale=2)
     out_im = w2x_obj.process(im)
-    print("Elapsed time: %fs" % (time() - t))
+    print(f"Elapsed time: {time() - t}s")
     out_im.save("temp.png")
