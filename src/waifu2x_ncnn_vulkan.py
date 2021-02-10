@@ -104,17 +104,13 @@ class Waifu2x:
         :param im: PIL.Image
         :return: PIL.Image
         """
-        in_bytes = im.tobytes()
-        in_buffer = raw.PixelBuffer(len(in_bytes))
+        in_bytes = bytearray(im.tobytes())
         channels = int(len(in_bytes) / (im.width * im.height))
-        out_buffer = raw.PixelBuffer((self._raw_w2xobj.scale ** 2) * len(in_bytes))
+        out_bytes = bytearray((self._raw_w2xobj.scale ** 2) * len(in_bytes))
 
-        for i, b in enumerate(in_bytes):
-            in_buffer[i] = b
-
-        raw_in_image = raw.Image(in_buffer, im.width, im.height, channels)
+        raw_in_image = raw.Image(in_bytes, im.width, im.height, channels)
         raw_out_image = raw.Image(
-            out_buffer,
+            out_bytes,
             self._raw_w2xobj.scale * im.width,
             self._raw_w2xobj.scale * im.height,
             channels,
@@ -126,17 +122,10 @@ class Waifu2x:
             self._raw_w2xobj.tilesize = max(im.width, im.height)
             self._raw_w2xobj.process_cpu(raw_in_image, raw_out_image)
 
-        out_bytes = bytes(
-            map(
-                lambda i: out_buffer[i],
-                range((self._raw_w2xobj.scale ** 2) * len(in_bytes)),
-            )
-        )
-
         return Image.frombytes(
             im.mode,
             (self._raw_w2xobj.scale * im.width, self._raw_w2xobj.scale * im.height),
-            out_bytes,
+            bytes(out_bytes),
         )
 
     def get_prepadding(self) -> int:

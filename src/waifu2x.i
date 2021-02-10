@@ -3,8 +3,9 @@
 %include "carrays.i"
 %include "std_string.i"
 %include "stdint.i"
+%include "pybuffer.i"
 
-%array_class(unsigned char, PixelBuffer);
+%pybuffer_mutable_string(unsigned char *d);
 
 %{
     #include "waifu2x.h"

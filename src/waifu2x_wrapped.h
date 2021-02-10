@@ -2,8 +2,6 @@
 #define WAIFU2X_NCNN_VULKAN_WAIFU2X_WRAPPED_H
 #include "waifu2x.h"
 
-//Todo: implement faster C-array to Python bytes methods like buffer interface from https://stackoverflow.com/questions/5424324/fast-conversion-of-c-c-vector-to-numpy-array
-
 // wrapper class of ncnn::Mat
 typedef struct Image{
     unsigned char *data;
