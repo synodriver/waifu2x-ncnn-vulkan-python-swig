@@ -8,7 +8,8 @@ This project only wrapped the original Waifu2x class. As a result, functions oth
 
 ## Download
 
-Not yet available as release. However you can build it yourself.
+There is only a linux x64 release now. The build on windows doesn't work now. For other platforms, you may compile it on
+your own.
 
 
 ## Build
