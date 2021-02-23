@@ -738,7 +738,15 @@ Waifu2xWrapped::Waifu2xWrapped(int gpuid, bool tta_mode, int num_threads) : Waif
 
 uint32_t Waifu2xWrapped::get_heap_budget() {
     return this->vkdev->get_heap_budget();
-};
+}
+
+int Waifu2xWrapped::load(const StringType &parampath, const StringType &modelpath) {
+#if _WIN32
+    return Waifu2x::load(*parampath.wstr, *modelpath.wstr);
+#else
+    return Waifu2x::load(*parampath.str, *modelpath.str);
+#endif
+}
 
 int get_gpu_count() {
     return ncnn::get_gpu_count();

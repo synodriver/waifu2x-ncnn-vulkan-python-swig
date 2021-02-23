@@ -1,5 +1,6 @@
-import os
+import sys
 from pathlib import Path
+from ctypes import create_string_buffer
 
 from PIL import Image
 
@@ -93,7 +94,19 @@ class Waifu2x:
                 )
 
         if Path(parampath).exists() and Path(modelpath).exists():
-            self._raw_w2xobj.load(str(parampath), str(modelpath))
+            parampath_str, modelpath_str = raw.StringType(), raw.StringType()
+            if sys.platform in ("win32", "cygwin"):
+                parampath_str.wstr = raw.new_wstr_p()
+                raw.wstr_p_assign(parampath_str.wstr, str(parampath))
+                modelpath_str.wstr = raw.new_wstr_p()
+                raw.wstr_p_assign(modelpath_str.wstr, str(modelpath))
+            else:
+                parampath_str.str = raw.new_str_p()
+                raw.str_p_assign(parampath_str.str, str(parampath))
+                modelpath_str.str = raw.new_str_p()
+                raw.str_p_assign(modelpath_str.str, str(modelpath))
+
+            self._raw_w2xobj.load(parampath_str, modelpath_str)
         else:
             raise FileNotFoundError(f"{parampath} or {modelpath} not found")
 

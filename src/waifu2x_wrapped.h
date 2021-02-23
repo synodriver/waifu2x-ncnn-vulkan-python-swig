@@ -17,9 +17,15 @@ typedef struct Image{
 
 } Image;
 
+union StringType {
+    std::string *str;
+    std::wstring *wstr;
+};
+
 class Waifu2xWrapped : public Waifu2x {
 public:
     Waifu2xWrapped(int gpuid, bool tta_mode = false, int num_threads = 1);
+    int load(const StringType &parampath, const StringType &modelpath);
     int process(const Image& inimage, Image& outimage) const;
     int process_cpu(const Image& inimage, Image& outimage) const;
     uint32_t get_heap_budget();
