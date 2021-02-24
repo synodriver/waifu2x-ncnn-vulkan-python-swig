@@ -54,7 +54,7 @@ out_im = w2x_obj.process(im)
 out_im.save("1.png")
 ```
 
-##Docs
+## Docs
 
 ### Methods
 class **Waifu2x**(gpuid=0,
