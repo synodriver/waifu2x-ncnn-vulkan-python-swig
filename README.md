@@ -1,6 +1,6 @@
 # waifu2x ncnn Vulkan Python
 
-#Introduction
+## Introduction
 
 [waifu2x-ncnn-vulkan](https://github.com/nihui/waifu2x-ncnn-vulkan) is nihui's ncnn implementation of waifu2x converter. Runs fast on Intel / AMD / Nvidia with Vulkan API.
 
@@ -67,7 +67,7 @@ tilesize=0)
 
 > waifu2x-ncnn-vulkan class which can do image super resolution.
 > 
-> ###**Parameters**
+> ### **Parameters**
 >
 >**gpuid**: int
 > >the id of the gpu device to use. -1 for cpu mode.
@@ -121,14 +121,14 @@ Waifu2x.**set_params**(self, scale=2, noise=-1, tilesize=0)
 > >
 > > 0 for automatically setting the size. default: 0
 > 
-> ###**Returns**: None
+> ### **Returns**: None
 
 Waifu2x.**load**(parampath: str = "", modelpath: str = "")
 > Load models from given paths. Use Waifu2x.model if one or all of the parameters are not given.
 > 
 > This function will be called during the object initialization, so usually no need to call it except for setting a different **Waifu2x.model** after initialization.
 >
-> ###**Parameters**
+> ### **Parameters**
 >
 > **parampath**: str
 > > the path to model params. usually ended with ".param".
@@ -139,17 +139,17 @@ Waifu2x.**load**(parampath: str = "", modelpath: str = "")
 > > value: -1/0/1/2/3. default: -1
 >
 >
-> ###**return**: None
+> ### **Returns**: None
 
 Waifu2x.**process**(self, im: PIL.Image)
 > Process the incoming PIL.Image
 >
-> ###**Parameters**
+> ### **Parameters**
 >
 > **im**: PIL.Image
 > > the image object to process
 >
-> ###**Returns**: PIL.Image
+> ### **Returns**: PIL.Image
 > > The result PIL.Image object.
 
 ### Properties
