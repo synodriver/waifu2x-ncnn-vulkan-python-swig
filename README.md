@@ -104,7 +104,7 @@ Waifu2x.**set_params**(self, scale=2, noise=-1, tilesize=0)
 > 
 > This function will be called during the object initialization, so usually no need to call it except for parameters changes after initialization.
 > 
-> ###**Parameters**
+> ### **Parameters**
 > 
 > **scale**: int
 > > scale ratio. 
