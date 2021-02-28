@@ -1,4 +1,5 @@
 import sys
+from math import floor
 from pathlib import Path
 from ctypes import create_string_buffer
 
@@ -14,14 +15,14 @@ else:
 
 class Waifu2x:
     def __init__(
-            self,
-            gpuid=0,
-            model="models-cunet",
-            tta_mode=False,
-            num_threads=1,
-            scale=2,
-            noise=0,
-            tilesize=0,
+        self,
+        gpuid=0,
+        model="models-cunet",
+        tta_mode=False,
+        num_threads=1,
+        scale: float = 2,
+        noise=0,
+        tilesize=0,
     ):
         """
         Waifu2x class which can do image super resolution.
@@ -30,13 +31,14 @@ class Waifu2x:
         :param model: the name or the path to the model
         :param tta_mode: whether to enable tta mode or not
         :param num_threads: the number of threads in upscaling
-        :param scale: scale ratio. value: 1/2. default: 2
+        :param scale: scale ratio. value: float. default: 2
         :param noise: noise level. value: -1/0/1/2/3. default: -1
         :param tilesize: tile size. 0 for automatically setting the size. default: 0
         """
         self._raw_w2xobj = raw.Waifu2xWrapped(gpuid, tta_mode, num_threads)
         self.model = model
         self.gpuid = gpuid
+        self.scale = scale  # the real scale ratio
         self.set_params(scale, noise, tilesize)
         self.load()
 
@@ -49,7 +51,9 @@ class Waifu2x:
         :param tilesize: default: 0
         :return: None
         """
-        self._raw_w2xobj.scale = scale
+        self._raw_w2xobj.scale = (
+            2 if scale > 1 else 1
+        )  # control the real scale ratio at each raw process call
         self._raw_w2xobj.noise = noise
         if tilesize == 0:
             self._raw_w2xobj.tilesize = self.get_tilesize()
@@ -69,7 +73,7 @@ class Waifu2x:
             model_dir = Path(self.model)
             if not model_dir.is_absolute():
                 if (
-                        not model_dir.is_dir()
+                    not model_dir.is_dir()
                 ):  # try to load it from module path if not exists as directory
                     dir_path = Path(__file__).parent
                     model_dir = dir_path.joinpath("models", self.model)
@@ -111,6 +115,19 @@ class Waifu2x:
             raise FileNotFoundError(f"{parampath} or {modelpath} not found")
 
     def process(self, im: Image) -> Image:
+        if self.scale > 1:
+            cur_scale = 1
+            w, h = im.size
+            while cur_scale < self.scale:
+                im = self._process(im)
+                cur_scale *= 2
+            w, h = floor(w * self.scale), floor(h * self.scale)
+            im = im.resize((w, h))
+        else:
+            im = self._process(im)
+        return im
+
+    def _process(self, im: Image) -> Image:
         """
         Process the incoming PIL.Image
 
@@ -127,7 +144,7 @@ class Waifu2x:
             self._raw_w2xobj.scale * im.width,
             self._raw_w2xobj.scale * im.height,
             channels,
-            )
+        )
 
         if self.gpuid != -1:
             self._raw_w2xobj.process(raw_in_image, raw_out_image)
@@ -184,9 +201,9 @@ class Waifu2x:
 if __name__ == "__main__":
     from time import time
 
-    im = Image.open("../../images/0.jpg")
     t = time()
+    im = Image.open("../../images/0.jpg")
     w2x_obj = Waifu2x(0, noise=0, scale=2)
     out_im = w2x_obj.process(im)
-    print(f"Elapsed time: {time() - t}s")
     out_im.save("temp.png")
+    print(f"Elapsed time: {time() - t}s")

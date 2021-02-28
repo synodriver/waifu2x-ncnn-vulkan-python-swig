@@ -69,31 +69,31 @@ tilesize=0)
 > 
 > ### **Parameters**
 >
->**gpuid**: int
+> **gpuid**: int
 > >the id of the gpu device to use. -1 for cpu mode.
 >
->**model**: str
+> **model**: str
 > > the name or the path to the model
 >
->**tta_mode**: bool
+> **tta_mode**: bool
 > > whether to enable tta mode or not
 > 
->**num_threads**: int
+> **num_threads**: int
 > > the number of threads in upscaling
 > >
 > > default 1
 > 
->**scale**: int
+> **scale**: int
 > > scale ratio. 
 > >
-> > value: 1/2. default: 2
+> > value: float. default: 2
 > 
->**noise**: int
+> **noise**: int
 > > noise level. 
 > >
 > > value: -1/0/1/2/3. default: -1
 > 
->**tilesize**: int
+> **tilesize**: int
 > > tile size. 
 > >
 > > 0 for automatically setting the size. default: 0
@@ -116,7 +116,7 @@ Waifu2x.**set_params**(self, scale=2, noise=-1, tilesize=0)
 > >
 > > value: -1/0/1/2/3. default: -1
 >
->**tilesize**: int
+> **tilesize**: int
 > > tile size.
 > >
 > > 0 for automatically setting the size. default: 0
@@ -133,7 +133,7 @@ Waifu2x.**load**(parampath: str = "", modelpath: str = "")
 > **parampath**: str
 > > the path to model params. usually ended with ".param".
 >
->**modelpath**: str
+> **modelpath**: str
 > > the path to model bin. usually ended with ".bin"
 > >
 > > value: -1/0/1/2/3. default: -1
@@ -160,6 +160,12 @@ Waifu2x.**gpuid**
 Waifu2x.**model**
 > The model name or path this object is going to use. Waifu2x.load() should be called manually after updating this property.
 >
+Waifu2x.**scale**
+> The result scale ratio. It is different to the self._raw_w2xobj.scale. Waifu2x.scale controls the result scale size while
+> self._raw_w2xobj.scale controls the scale ratio at each raw image process method call. 
+> 
+> ( Waifu2x.**_process**(im) is the raw image process call. A upscaling task is done by repeatedly calling 2 times super-resolution)
+>
 Waifu2x.**_raw_w2xobj**
 > The raw binding object of the original Waifu2x class. All the processing parameters are actually passed to this object eventually.
 > 
@@ -168,7 +174,6 @@ Waifu2x.**_raw_w2xobj**
 ## Known issues
 - [Module finalization will crash for nvidia dedicated graphics card(s) on Linux. (The image processing still works.)](https://github.com/Tencent/ncnn/issues/2666)
 - Not yet tested for Mac OS. I guess it should work.
-- The new upscale implementation included in the 20210210 version of waifu2x-ncnn-vulkan hasn't been implemented in this project. I will include it in the next build.
 
 ## Original waifu2x Project
 
