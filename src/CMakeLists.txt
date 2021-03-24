@@ -17,8 +17,6 @@ endif()
 
 cmake_minimum_required(VERSION 3.9)
 
-set(CMAKE_BUILD_TYPE Release)
-
 option(USE_SYSTEM_NCNN "build with system libncnn" OFF)
 option(USE_STATIC_MOLTENVK "link moltenvk static library" OFF)
 

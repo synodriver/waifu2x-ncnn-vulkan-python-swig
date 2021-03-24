@@ -29,6 +29,9 @@ public:
     int process(const Image& inimage, Image& outimage) const;
     int process_cpu(const Image& inimage, Image& outimage) const;
     uint32_t get_heap_budget();
+
+private:
+    int gpuid;
 };
 
 int get_gpu_count();
