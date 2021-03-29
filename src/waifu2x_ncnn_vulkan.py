@@ -1,7 +1,6 @@
 import sys
 from math import floor
 from pathlib import Path
-from ctypes import create_string_buffer
 
 from PIL import Image
 
