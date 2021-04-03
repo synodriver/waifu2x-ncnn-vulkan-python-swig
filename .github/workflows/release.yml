@@ -25,7 +25,7 @@ jobs:
 
   ubuntu:
     needs: [setup]
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-latest
     env:
       PACKAGENAME: ${{ needs.setup.outputs.APPNAME }}-${{ needs.setup.outputs.VERSION }}-ubuntu
     steps:
@@ -55,9 +55,10 @@ jobs:
       run: |
         mkdir -p ${{ env.PACKAGENAME }}
         cp README.md LICENSE ${{ env.PACKAGENAME }}
-        cp build/${{ needs.setup.outputs.APPNAME }} ${{ env.PACKAGENAME }}
-        strip -g ${{ env.PACKAGENAME }}/${{ needs.setup.outputs.APPNAME }}
-        cp -r models/* ${{ env.PACKAGENAME }}
+        cp build/waifu2x_ncnn_vulkan.py ${{ env.PACKAGENAME }}
+        cp build/waifu2x_ncnn_vulkan_wrapper.py ${{ env.PACKAGENAME }}
+        cp build/_waifu2x_ncnn_vulkan_wrapper.so ${{ env.PACKAGENAME }}
+        cp -r models/ ${{ env.PACKAGENAME }}
         zip -9 -r ${{ env.PACKAGENAME }}.zip ${{ env.PACKAGENAME }}
     - name: upload
       uses: actions/upload-artifact@v2

@@ -84,17 +84,17 @@ tilesize=0)
 > > default 1
 > 
 > **scale**: int
-> > scale ratio. 
+> > scale level, 1 = no scaling, 2 = upscale 2x
 > >
 > > value: float. default: 2
 > 
 > **noise**: int
-> > noise level. 
+> > noise level, large value means strong denoise effect, -1 = no effect
 > >
 > > value: -1/0/1/2/3. default: -1
 > 
 > **tilesize**: int
-> > tile size. 
+> > tile size, use smaller value to reduce GPU memory usage, default selects automatically
 > >
 > > 0 for automatically setting the size. default: 0
 
@@ -112,7 +112,7 @@ Waifu2x.**set_params**(self, scale=2, noise=-1, tilesize=0)
 > > value: 1/2. default: 2
 >
 >**noise**: int
-> > noise level.
+> > denoise level.
 > >
 > > value: -1/0/1/2/3. default: -1
 >

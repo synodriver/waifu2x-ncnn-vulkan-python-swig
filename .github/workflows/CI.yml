@@ -21,6 +21,7 @@ jobs:
         Invoke-WebRequest -Uri https://sdk.lunarg.com/sdk/download/1.2.162.0/windows/VulkanSDK-1.2.162.0-Installer.exe?Human=true -OutFile VulkanSDK-1.2.162.0-Installer.exe
         7z x -aoa ./VulkanSDK-1.2.162.0-Installer.exe -oVulkanSDK
         Remove-Item .\VulkanSDK\Demos, .\VulkanSDK\Samples, .\VulkanSDK\Third-Party, .\VulkanSDK\Tools, .\VulkanSDK\Tools32, .\VulkanSDK\Bin32, .\VulkanSDK\Lib32 -Recurse
+
     - name: build
       run: |
         $env:VULKAN_SDK="$(pwd)/VulkanSDK"
@@ -34,6 +35,9 @@ jobs:
     - uses: actions/checkout@v2
       with:
         submodules: 'recursive'
+#    - name: install-swig-dependencies
+#      run: |
+#        sudo apt install python3-dev swig
     - name: cache-vulkansdk
       id: cache-vulkansdk
       uses: actions/cache@v1

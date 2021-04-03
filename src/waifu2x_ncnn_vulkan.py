@@ -30,8 +30,8 @@ class Waifu2x:
         :param model: the name or the path to the model
         :param tta_mode: whether to enable tta mode or not
         :param num_threads: the number of threads in upscaling
-        :param scale: scale ratio. value: float. default: 2
-        :param noise: noise level. value: -1/0/1/2/3. default: -1
+        :param scale: scale level, 1 = no scaling, 2 = upscale 2x. value: float. default: 2
+        :param noise: noise level, large value means strong denoise effect, -1 = no effect. value: -1/0/1/2/3. default: 0
         :param tilesize: tile size. 0 for automatically setting the size. default: 0
         """
         self._raw_w2xobj = raw.Waifu2xWrapped(gpuid, tta_mode, num_threads)
