@@ -201,7 +201,7 @@ if __name__ == "__main__":
     from time import time
 
     t = time()
-    im = Image.open("../../images/0.jpg")
+    im = Image.open("../images/0.jpg")
     w2x_obj = Waifu2x(0, noise=0, scale=2)
     out_im = w2x_obj.process(im)
     out_im.save("temp.png")
