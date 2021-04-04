@@ -1,6 +1,6 @@
 # waifu2x ncnn Vulkan Python
 
-[CI](https://github.com/ArchieMeng/waifu2x-ncnn-vulkan-python/workflows/CI/badge.svg)
+![CI](https://github.com/ArchieMeng/waifu2x-ncnn-vulkan-python/workflows/CI/badge.svg)
 
 ## Introduction
 
