@@ -32,13 +32,19 @@ jobs:
       run: |
         Invoke-WebRequest -Uri https://nchc.dl.sourceforge.net/project/swig/swigwin/swigwin-4.0.2/swigwin-4.0.2.zip -OutFile swigwin-4.0.2.zip
         7z x swigwin-4.0.2.zip -oSWIG
+    - name: test-swig
+      run: |
+        $env:SWIG_DIR="$(pwd)\SWIG"
+        $env:SWIG_EXECUTABLE="$(pwd)\SWIG\swig.exe"
+        $env:PATH="$env:PATH;$env:SWIG_DIR"
+        swig
     - name: build
       run: |
         $env:VULKAN_SDK="$(pwd)\VulkanSDK"
         $env:SWIG_DIR="$(pwd)\SWIG"
         $env:SWIG_EXECUTABLE="$(pwd)\SWIG\swig.exe"
         $env:PATH="$env:PATH;$env:SWIG_DIR"
-        dir
+        ls
         mkdir build; cd build
         cmake -A x64 ../src
         cmake --build . --config Release -j 2
