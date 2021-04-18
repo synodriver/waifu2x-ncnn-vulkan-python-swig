@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 3.15)
 cmake_policy(SET CMP0091 NEW)
 set(CMAKE_POLICY_DEFAULT_CMP0091 NEW)
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
@@ -5,14 +6,12 @@ set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 project(waifu2x-ncnn-vulkan-python)
 
 # SWIG
-find_package(PythonLibs REQUIRED)
+find_package(Python REQUIRED COMPONENTS Development)
 find_package(SWIG REQUIRED COMPONENTS python)
 if(SWIG_FOUND)
     message("SWIG found: ${SWIG_EXECUTABLE}")
     INCLUDE(${SWIG_USE_FILE})
 endif()
-
-cmake_minimum_required(VERSION 3.9)
 
 option(USE_SYSTEM_NCNN "build with system libncnn" OFF)
 option(USE_STATIC_MOLTENVK "link moltenvk static library" OFF)
@@ -38,7 +37,6 @@ macro(waifu2x_add_shader SHADER_SRC)
 endmacro()
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
-include_directories(${PYTHON_INCLUDE_DIRS})
 include_directories(.)
 #set(CMAKE_CXX_STANDARD 11)
 
@@ -241,4 +239,4 @@ set_property(SOURCE waifu2x.i PROPERTY CPLUSPLUS ON DEPENDS generate-spirv)
 swig_add_library(waifu2x_ncnn_vulkan_wrapper LANGUAGE python SOURCES waifu2x.i waifu2x.cpp waifu2x_wrapped.cpp)
 add_dependencies(waifu2x_ncnn_vulkan_wrapper generate-spirv)
 target_compile_options(waifu2x_ncnn_vulkan_wrapper PUBLIC -fexceptions)
-target_link_libraries(waifu2x_ncnn_vulkan_wrapper ${WAIFU2X_LINK_LIBRARIES} ${PYTHON_LIBRARIES})
+target_link_libraries(waifu2x_ncnn_vulkan_wrapper ${WAIFU2X_LINK_LIBRARIES} Python::Module)
