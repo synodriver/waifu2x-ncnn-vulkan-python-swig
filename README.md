@@ -17,6 +17,7 @@ This project only wrapped the original Waifu2x class. As a result, functions oth
 linux x64, Windows x64 and MacOS x64 releases are available now. For other platforms, you may compile it on your own.
 The reason why MacOS ARM64 build is not available is that it needs ARM Python Dev Libs which I have no ideas on how to
 get it on Github's MacOS x64 VM. Moreover, I don't have a Mac.
+For Linux distro with GLIBC < 2.29 (like Ubuntu 18.04), ubuntu-1804 pre-built should be used.
 
 
 ## Build
